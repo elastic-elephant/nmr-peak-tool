@@ -55,8 +55,6 @@ with col1:
     results = results.sort_values("Δ ppm")
 
     st.write("Matches")
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("---")
 
     if not results.empty:
         styled = results[["Compound", "Group", "ppm", "Multiplicity", "Δ ppm"]]\
@@ -89,9 +87,10 @@ with col2:
 
     results2 = results2.sort_values("ppm")
 
+    
+    st.write("")  # spacer line 1
+    st.write("")  # spacer line 2
     st.write("Expected peaks")
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
-    st.markdown("---")
 
     if not results2.empty:
         st.dataframe(
