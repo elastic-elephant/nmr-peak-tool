@@ -10,6 +10,8 @@ df = pd.read_excel("NMR_Impurities.xlsx", sheet_name="Shift Table")
 # Clean column names
 df.columns = ["Nucleus", "Compound", "Group", "Multiplicity", *df.columns[4:]]
 
+compound_list = sorted(df["Compound"].dropna().unique())
+
 # Remove NaN from nucleus options
 df = df[df["Nucleus"].notna()]
 
