@@ -89,7 +89,7 @@ with col2:
 
     ppm_series2 = clean_ppm(df[solvent2])
 
-   results2 = df[
+    results2 = df[
     (df["Compound"] == compound) &
     (df["Nucleus"] == nucleus2) &
     (ppm_series2.notna())
