@@ -41,22 +41,28 @@ with col1:
     solvent = st.selectbox("Solvent", df.columns[4:], key="solvent1")
     nucleus = st.selectbox("Nucleus", df["Nucleus"].dropna().unique(), key="nuc1")
 
+    EPS = 1e-6
+
     ppm_series = clean_ppm(df[solvent])
 
-    results = df[
-        (df["Nucleus"] == nucleus) &
-        (ppm_series.notna()) &
-        (abs(ppm_series - ppm_input) <= (tolerance + 1e-6))
+    # 🔥 attach BEFORE filtering
+    df_temp = df.copy()
+    df_temp["ppm"] = ppm_series
+    df_temp["Δ ppm"] = abs(ppm_series - ppm_input)
+
+    # ✅ now filter correctly
+    results = df_temp[
+        (df_temp["Nucleus"] == nucleus) &
+        (df_temp["ppm"].notna()) &
+        (df_temp["Δ ppm"] <= (tolerance + EPS))
     ].copy()
 
-    results["ppm"] = ppm_series
-    results["Δ ppm"] = abs(ppm_series - ppm_input)
-
-    # 🔥 Force display to 2 decimal places (string formatting)
+    # ✅ sort BEFORE converting to string
+    results = results.sort_values("Δ ppm")
+    
+    # ✅ format AFTER everything
     results["ppm"] = results["ppm"].map(lambda x: f"{x:.2f}")
     results["Δ ppm"] = results["Δ ppm"].map(lambda x: f"{x:.2f}")
-
-    results = results.sort_values("Δ ppm")
 
     st.write("Matches")
 
