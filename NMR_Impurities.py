@@ -62,7 +62,6 @@ with col1:
         lambda x: ["background-color: #d4edda" if v <= tolerance/2 else "" for v in x],
         subset=["Δ ppm"]
     )
-    .highlight_min(subset=["Δ ppm"], color="#00FF88")
 
         st.dataframe(styled, use_container_width=True)  # ✅ no horizontal scroll
     else:
