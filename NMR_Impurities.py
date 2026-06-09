@@ -13,13 +13,18 @@ solvent = st.selectbox("Solvent", df.columns[4:])  # solvents start after multip
 nucleus = st.selectbox("Nucleus", df.iloc[:,0].unique())
 
 # Clean ppm column (CRITICAL)
-ppm_series = pd.to_numeric(
-    df[solvent].astype(str)
-    .str.replace("−", "-")     # fix unicode minus
-    .str.replace(r"[a-zA-Z]", "", regex=True)  # remove footnotes like "b"
-    .str.strip(),
-    errors="coerce"
-)
+def clean_ppm(series):
+    return pd.to_numeric(
+        series.astype(str)
+        .str.replace("−", "-", regex=False)   # fix minus
+        .str.replace("–", "-", regex=False)   # fix dash
+        .str.replace(r"[a-zA-Z]", "", regex=True)  # remove letters
+        .str.split("-").str[0]   # take FIRST value if range
+        .str.strip(),
+        errors="coerce"
+    )
+
+ppm_series = clean_ppm(df[solvent])
 
 # Apply filtering
 results = df[
