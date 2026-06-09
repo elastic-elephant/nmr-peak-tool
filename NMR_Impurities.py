@@ -4,7 +4,7 @@ import pandas as pd
 # Load data
 df = pd.read_excel("NMR_Impurities.xlsx", sheet_name="Shift Table")
 
-st.title("🧪 NMR Impurity Finder")
+st.title("NMR Impurity Finder")
 
 # Inputs (ppm-based search)
 ppm_input = st.number_input("Enter ppm value", value=2.10)
