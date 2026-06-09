@@ -81,17 +81,17 @@ with col1:
 with col2:
     st.subheader("Compound → ppm")
 
-    compound = st.text_input("Compound name")
+    compound = st.selectbox("Compound", compound_list)
     solvent2 = st.selectbox("Solvent", df.columns[4:], key="solvent2")
     nucleus2 = st.selectbox("Nucleus", df["Nucleus"].dropna().unique(), key="nuc2")
 
     ppm_series2 = clean_ppm(df[solvent2])
 
     results2 = df[
-        (df["Nucleus"] == nucleus2) &
-        (df["Compound"].str.contains(compound, case=False, na=False)) &
-        (ppm_series2.notna())
-    ].copy()
+    (df["Nucleus"] == nucleus2) &
+    (df["Compound"] == compound) &
+    (ppm_series2.notna())
+].copy()
 
     results2["ppm_num"] = ppm_series2
     results2 = results2.sort_values("ppm_num")
