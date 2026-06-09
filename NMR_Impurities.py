@@ -49,8 +49,12 @@ with col1:
         (abs(ppm_series - ppm_input) <= tolerance)
     ].copy()
 
-    results["ppm"] = ppm_series.round(2)  # ✅ round
-    results["Δ ppm"] = abs(results["ppm"] - ppm_input).round(2)
+    results["ppm"] = ppm_series
+    results["Δ ppm"] = abs(ppm_series - ppm_input)
+
+    # 🔥 Apply rounding ONLY at the end
+    results["ppm"] = results["ppm"].round(2)
+    results["Δ ppm"] = results["Δ ppm"].round(2)
 
     results = results.sort_values("Δ ppm")
 
@@ -58,10 +62,7 @@ with col1:
 
     if not results.empty:
         styled = results[["Compound", "Group", "ppm", "Multiplicity", "Δ ppm"]]\
-    .style.apply(
-        lambda x: ["background-color: #d4edda" if v <= tolerance/2 else "" for v in x],
-        subset=["Δ ppm"]
-    )
+    .style.highlight_min(subset=["Δ ppm"], color="lightgreen")
 
         st.dataframe(styled, use_container_width=True)  # ✅ no horizontal scroll
     else:
