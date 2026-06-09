@@ -46,15 +46,15 @@ with col1:
     results = df[
         (df["Nucleus"] == nucleus) &
         (ppm_series.notna()) &
-        (abs(ppm_series - ppm_input) <= tolerance)
+        (abs(ppm_series - ppm_input) <= (tolerance + 1e-6))
     ].copy()
 
     results["ppm"] = ppm_series
     results["Δ ppm"] = abs(ppm_series - ppm_input)
 
-    # 🔥 Apply rounding ONLY at the end
-    results["ppm"] = results["ppm"].round(2)
-    results["Δ ppm"] = results["Δ ppm"].round(2)
+    # 🔥 Force display to 2 decimal places (string formatting)
+    results["ppm"] = results["ppm"].map(lambda x: f"{x:.2f}")
+    results["Δ ppm"] = results["Δ ppm"].map(lambda x: f"{x:.2f}")
 
     results = results.sort_values("Δ ppm")
 
@@ -87,7 +87,7 @@ with col2:
         (ppm_series2.notna())
     ].copy()
 
-    results2["ppm"] = ppm_series2.round(2)  # ✅ round
+    results2["ppm"] = ppm_series2.map(lambda x: f"{x:.2f}")
 
     results2 = results2.sort_values("ppm")
     
