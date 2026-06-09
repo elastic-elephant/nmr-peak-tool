@@ -93,9 +93,10 @@ with col2:
         (ppm_series2.notna())
     ].copy()
 
-    results2["ppm"] = ppm_series2.map(lambda x: f"{x:.2f}")
+    results2["ppm_num"] = ppm_series2
+    results2 = results2.sort_values("ppm_num")
 
-    results2 = results2.sort_values("ppm")
+    results2["ppm"] = results2["ppm_num"].map(lambda x: f"{x:.2f}")
     
     st.write("Expected peaks")
 
