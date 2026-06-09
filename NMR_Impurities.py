@@ -109,7 +109,13 @@ else:
 
     st.write("Expected peaks")
 
+if not results2.empty:
+    # Create aligned table (same structure as left, minus Δ ppm)
+    display_df = results2[["Compound", "Group", "ppm", "Multiplicity"]].copy()
+
     st.dataframe(
-        results2[["Compound", "Group", "ppm", "Multiplicity"]],
+        display_df,
         use_container_width=True
     )
+else:
+    st.info(f"No {nucleus2} peaks found for {compound} in {solvent2}")
