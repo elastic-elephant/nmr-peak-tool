@@ -55,6 +55,7 @@ with col1:
     results = results.sort_values("Δ ppm")
 
     st.write("Matches")
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("---")
 
     if not results.empty:
@@ -89,6 +90,7 @@ with col2:
     results2 = results2.sort_values("ppm")
 
     st.write("Expected peaks")
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
     st.markdown("---")
 
     if not results2.empty:
