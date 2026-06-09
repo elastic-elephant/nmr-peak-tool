@@ -1,11 +1,17 @@
 import streamlit as st
 import pandas as pd
 
+# --- Page config (WIDER LAYOUT) ---
+st.set_page_config(layout="wide")
+
 # Load data
 df = pd.read_excel("NMR_Impurities.xlsx", sheet_name="Shift Table")
 
 # Clean column names
 df.columns = ["Nucleus", "Compound", "Group", "Multiplicity", *df.columns[4:]]
+
+# 🔥 Remove NaN from nucleus options
+df = df[df["Nucleus"].notna()]
 
 st.title("🧪 NMR Impurity Finder")
 
@@ -21,8 +27,8 @@ def clean_ppm(series):
         errors="coerce"
     )
 
-# --- Layout ---
-col1, col2 = st.columns(2)
+# --- Layout with spacing ---
+col1, spacer, col2 = st.columns([1, 0.1, 1])
 
 # =========================
 # 🔍 LEFT: ppm → compound
@@ -33,7 +39,7 @@ with col1:
     ppm_input = st.number_input("ppm", value=2.10)
     tolerance = st.number_input("Tolerance", value=0.05)
     solvent = st.selectbox("Solvent", df.columns[4:], key="solvent1")
-    nucleus = st.selectbox("Nucleus", df["Nucleus"].unique(), key="nuc1")
+    nucleus = st.selectbox("Nucleus", df["Nucleus"].dropna().unique(), key="nuc1")
 
     ppm_series = clean_ppm(df[solvent])
 
@@ -43,19 +49,18 @@ with col1:
         (abs(ppm_series - ppm_input) <= tolerance)
     ].copy()
 
-    results["ppm"] = ppm_series
-    results["Δ ppm"] = abs(results["ppm"] - ppm_input)
+    results["ppm"] = ppm_series.round(2)  # ✅ round
+    results["Δ ppm"] = abs(results["ppm"] - ppm_input).round(2)
 
     results = results.sort_values("Δ ppm")
 
     st.write("Matches")
 
     if not results.empty:
-        # Highlight best match (smallest Δ ppm)
         styled = results[["Compound", "Group", "ppm", "Multiplicity", "Δ ppm"]]\
             .style.highlight_min(subset=["Δ ppm"], color="lightgreen")
 
-        st.dataframe(styled)
+        st.dataframe(styled, use_container_width=True)  # ✅ no horizontal scroll
     else:
         st.info("No matches found")
 
@@ -68,7 +73,7 @@ with col2:
 
     compound = st.text_input("Compound name")
     solvent2 = st.selectbox("Solvent", df.columns[4:], key="solvent2")
-    nucleus2 = st.selectbox("Nucleus", df["Nucleus"].unique(), key="nuc2")
+    nucleus2 = st.selectbox("Nucleus", df["Nucleus"].dropna().unique(), key="nuc2")
 
     ppm_series2 = clean_ppm(df[solvent2])
 
@@ -78,15 +83,17 @@ with col2:
         (ppm_series2.notna())
     ].copy()
 
-    results2["ppm"] = ppm_series2
+    results2["ppm"] = ppm_series2.round(2)  # ✅ round
 
-    # Sort ppm values (cleaner chemically)
     results2 = results2.sort_values("ppm")
 
     st.write("Expected peaks")
 
     if not results2.empty:
-        st.dataframe(results2[["Compound", "Group", "ppm", "Multiplicity"]])
+        st.dataframe(
+            results2[["Compound", "Group", "ppm", "Multiplicity"]],
+            use_container_width=True  # ✅ full width
+        )
     else:
         if compound:
             st.info("No matches found")
