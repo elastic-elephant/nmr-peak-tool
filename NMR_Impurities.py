@@ -89,24 +89,27 @@ with col2:
 
     ppm_series2 = clean_ppm(df[solvent2])
 
-    results2 = df[
-    (df["Nucleus"] == nucleus2) &
+   results2 = df[
     (df["Compound"] == compound) &
+    (df["Nucleus"] == nucleus2) &
     (ppm_series2.notna())
 ].copy()
 
+# 🚨 Remove empty rows (THIS is the key fix)
+results2 = results2.dropna(subset=["Compound", "Group"])
+
+# If nothing valid → show proper message
+if results2.empty:
+    st.warning(f"No {nucleus2} peaks found for {compound} in {solvent2}")
+else:
     results2["ppm_num"] = ppm_series2
     results2 = results2.sort_values("ppm_num")
 
     results2["ppm"] = results2["ppm_num"].map(lambda x: f"{x:.2f}")
-    
+
     st.write("Expected peaks")
 
-    if not results2.empty:
-        st.dataframe(
-            results2[["Compound", "Group", "ppm", "Multiplicity"]],
-            use_container_width=True  # ✅ full width
-        )
-    else:
-        if compound:
-            st.info("No matches found")
+    st.dataframe(
+        results2[["Compound", "Group", "ppm", "Multiplicity"]],
+        use_container_width=True
+    )
