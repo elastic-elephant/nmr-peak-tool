@@ -90,6 +90,8 @@ with col2:
     
     st.write("")  # spacer line 1
     st.write("")  # spacer line 2
+    st.write("")  # spacer line 3
+    st.write("")  # spacer line 4
     st.write("Expected peaks")
 
     if not results2.empty:
