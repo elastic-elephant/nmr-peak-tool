@@ -58,7 +58,13 @@ with col1:
 
     if not results.empty:
         styled = results[["Compound", "Group", "ppm", "Multiplicity", "Δ ppm"]]\
-    .style.background_gradient(subset=["Δ ppm"], cmap="RdYlGn_r")
+    .style.background_gradient(
+        subset=["Δ ppm"],
+        cmap="RdYlGn_r",
+        vmin=0,
+        vmax=tolerance
+    )\
+    .highlight_min(subset=["Δ ppm"], color="#00FF88")
 
         st.dataframe(styled, use_container_width=True)  # ✅ no horizontal scroll
     else:
